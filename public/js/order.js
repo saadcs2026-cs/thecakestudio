@@ -5,10 +5,13 @@ const PAYMENT_INFO = {
 };
 
 // ⚠️ Cloudinary unsigned upload — REPLACE these
-const CLOUDINARY_CLOUD = 'dmvcr0fub';
+const CLOUDINARY_CLOUD = 'YOUR_CLOUD_NAME';
 const CLOUDINARY_PRESET = 'cake_studio_unsigned';
 
 const cart = JSON.parse(localStorage.getItem('cs_cart') || '[]');
+let lastOrderCode = '';
+let lastCustomerName = '';
+let selectedRating = 0;
 
 function renderSummary() {
   if (!cart.length) {
@@ -110,6 +113,9 @@ async function placeOrder() {
     if (!data.success) throw new Error(data.error || 'Order failed');
 
     localStorage.removeItem('cs_cart');
+    lastOrderCode = data.order_code;
+    lastCustomerName = name;
+
     document.querySelector('.form-wrap').innerHTML = `
       <div style="text-align:center;padding:30px">
         <div style="font-size:64px;margin-bottom:10px">🎉</div>
@@ -118,10 +124,58 @@ async function placeOrder() {
         <p style="color:var(--muted);font-size:14px">We will contact you shortly on <b>${phone}</b> to confirm your order. Save your order code for tracking.</p>
         <a href="/" class="btn-primary" style="display:inline-block;text-align:center;margin-top:20px;text-decoration:none">Back to Home</a>
       </div>`;
+
+    // Open feedback popup after 1.2 sec
+    setTimeout(openFeedback, 1200);
+
   } catch (e) {
     showToast('Failed to place order: ' + e.message, false);
     btn.disabled = false; btn.textContent = 'Place Order';
   }
+}
+
+// ===== Feedback Popup =====
+function openFeedback() {
+  document.getElementById('fb_name').value = lastCustomerName || '';
+  document.getElementById('feedbackModal').classList.add('show');
+}
+
+function closeFeedback() {
+  document.getElementById('feedbackModal').classList.remove('show');
+}
+
+// Star rating
+document.addEventListener('click', e => {
+  if (e.target.closest('#starRow')) {
+    const span = e.target;
+    if (span.tagName === 'SPAN') {
+      selectedRating = parseInt(span.dataset.v);
+      document.querySelectorAll('#starRow span').forEach(s => {
+        s.classList.toggle('on', parseInt(s.dataset.v) <= selectedRating);
+      });
+    }
+  }
+});
+
+async function submitFeedback() {
+  const name = document.getElementById('fb_name').value.trim();
+  const msg = document.getElementById('fb_msg').value.trim();
+  if (!name || !msg) { showToast('Please fill name and review', false); return; }
+  if (!selectedRating) { showToast('Please select rating', false); return; }
+
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customer_name: name, order_code: lastOrderCode,
+        rating: selectedRating, message: msg
+      })
+    });
+    if (res.ok) {
+      closeFeedback();
+      showToast('Thank you for your feedback! 💖');
+    } else showToast('Failed to submit', false);
+  } catch { showToast('Failed to submit', false); }
 }
 
 renderSummary();
