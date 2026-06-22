@@ -1,16 +1,11 @@
-// Generates a simple token (sufficient for single-owner panel)
 function genToken() {
   return crypto.randomUUID() + '-' + Date.now();
 }
 
-// In-memory token store — resets on worker restart.
-// For better persistence we re-validate via env.ADMIN_TOKEN secret on each request.
 function checkAuth(request, env) {
   const auth = request.headers.get('Authorization') || '';
   const token = auth.replace('Bearer ', '').trim();
   if (!token) return false;
-  // Token must start with our prefix (set on login). We store last valid token in env var via in-memory map.
-  // Simpler approach: accept any token that matches the static ADMIN_SESSION_SECRET issued at login time.
   return token === env.__sessionToken;
 }
 
@@ -19,7 +14,7 @@ export async function onRequest(context) {
   const path = (params.path || []).join('/');
   const method = request.method;
 
-  // ===== LOGIN =====
+  // LOGIN
   if (path === 'login' && method === 'POST') {
     const { username, password } = await request.json();
     try {
@@ -28,40 +23,34 @@ export async function onRequest(context) {
       ).bind(username, password).first();
       if (!row) return json({ success: false, error: 'Invalid credentials' }, 401);
       const token = genToken();
-      env.__sessionToken = token; // store in worker memory
+      env.__sessionToken = token;
       return json({ success: true, token });
     } catch (e) {
       return json({ success: false, error: e.message }, 500);
     }
   }
 
-  // All other routes require auth
   if (!checkAuth(request, env)) return json({ error: 'Unauthorized' }, 401);
 
-  // ===== ORDERS LIST =====
+  // ORDERS
   if (path === 'orders' && method === 'GET') {
     const url = new URL(request.url);
     const status = url.searchParams.get('status');
-    let query = 'SELECT * FROM orders';
     let stmt;
     if (status) {
-      query += ' WHERE status = ? ORDER BY created_at DESC';
-      stmt = env.DB.prepare(query).bind(status);
+      stmt = env.DB.prepare('SELECT * FROM orders WHERE status = ? ORDER BY created_at DESC').bind(status);
     } else {
-      query += ' ORDER BY created_at DESC';
-      stmt = env.DB.prepare(query);
+      stmt = env.DB.prepare('SELECT * FROM orders ORDER BY created_at DESC');
     }
     const { results } = await stmt.all();
     return json(results);
   }
 
-  // ===== UPDATE ORDER =====
   const orderMatch = path.match(/^orders\/(\d+)$/);
   if (orderMatch && method === 'PUT') {
     const id = orderMatch[1];
     const body = await request.json();
-    const fields = [];
-    const values = [];
+    const fields = [], values = [];
     ['status', 'admin_message', 'estimated_time'].forEach(k => {
       if (body[k] !== undefined) { fields.push(`${k} = ?`); values.push(body[k]); }
     });
@@ -71,7 +60,24 @@ export async function onRequest(context) {
     return json({ success: true });
   }
 
-  // ===== ADD PRODUCT =====
+  // SEND MESSAGE to customer inbox
+  if (path === 'sendmessage' && method === 'POST') {
+    const { phone, message } = await request.json();
+    if (!phone || !message) return json({ error: 'phone and message required' }, 400);
+    try {
+      const cleanPhone = phone.trim().replace(/[^\d+]/g, '');
+      const exists = await env.DB.prepare('SELECT id FROM customers WHERE phone = ?').bind(cleanPhone).first();
+      if (!exists) return json({ success: false, error: 'Customer has no account. Use WhatsApp instead.' });
+      await env.DB.prepare(
+        'INSERT INTO messages (customer_phone, message, from_admin) VALUES (?, ?, 1)'
+      ).bind(cleanPhone, message.trim().slice(0, 500)).run();
+      return json({ success: true });
+    } catch (e) {
+      return json({ error: e.message }, 500);
+    }
+  }
+
+  // PRODUCTS
   if (path === 'products' && method === 'POST') {
     const b = await request.json();
     await env.DB.prepare(`
@@ -85,10 +91,23 @@ export async function onRequest(context) {
     return json({ success: true });
   }
 
-  // ===== DELETE PRODUCT =====
   const prodMatch = path.match(/^products\/(\d+)$/);
   if (prodMatch && method === 'DELETE') {
     await env.DB.prepare('DELETE FROM products WHERE id = ?').bind(prodMatch[1]).run();
+    return json({ success: true });
+  }
+
+  // FEEDBACK
+  if (path === 'feedback' && method === 'GET') {
+    const { results } = await env.DB.prepare(
+      'SELECT * FROM feedback ORDER BY created_at DESC LIMIT 100'
+    ).all();
+    return json(results);
+  }
+
+  const fbMatch = path.match(/^feedback\/(\d+)$/);
+  if (fbMatch && method === 'DELETE') {
+    await env.DB.prepare('DELETE FROM feedback WHERE id = ?').bind(fbMatch[1]).run();
     return json({ success: true });
   }
 
