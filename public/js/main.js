@@ -113,13 +113,10 @@ async function doAuth() {
 }
 
 function logoutCustomer() {
-  if (!confirm('Logout from your account? Your cart will be cleared.')) return;
+  if (!confirm('Logout from your account?')) return;
   customer = null;
-  cart = [];
   localStorage.removeItem('cs_customer');
-  localStorage.removeItem('cs_cart');
   refreshAuthUI();
-  renderCart();
   showToast('Logged out');
 }
 
