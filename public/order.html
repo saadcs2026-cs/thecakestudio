@@ -96,8 +96,41 @@
   <button class="btn-primary" id="placeBtn" onclick="placeOrder()">Place Order</button>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- Feedback Popup Modal -->
+<div class="modal-overlay" id="feedbackModal">
+  <div class="modal-box">
+    <div style="text-align:center;font-size:48px;margin-bottom:8px">⭐</div>
+    <h2 style="text-align:center;font-family:'Playfair Display',serif">Loved Our Service?</h2>
+    <p style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px">
+      Share your experience with future customers 💖
+    </p>
 
+    <div class="field">
+      <label>Your Name</label>
+      <input id="fb_name" placeholder="How should we display your name?">
+    </div>
+
+    <div class="field">
+      <label>Rating</label>
+      <div class="stars" id="starRow">
+        <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span>
+        <span data-v="4">★</span><span data-v="5">★</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Your Review</label>
+      <textarea id="fb_msg" rows="3" placeholder="Tell us what you loved..."></textarea>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn-ghost" style="flex:1" onclick="closeFeedback()">Maybe Later</button>
+      <button class="btn-primary" style="flex:1;margin:0" onclick="submitFeedback()">Submit Review</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 <script src="/js/order.js"></script>
 </body>
 </html>
