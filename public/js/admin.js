@@ -1,14 +1,13 @@
-// ⚠️ Cloudinary unsigned upload — REPLACE these
+// ⚠️ REPLACE with your Cloudinary cloud name
 const CLOUDINARY_CLOUD = 'dmvcr0fub';
 const CLOUDINARY_PRESET = 'cake_studio_unsigned';
 
 let token = localStorage.getItem('cs_admin_token') || '';
 
-// ===== Auth =====
 function showApp() {
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('dashBox').style.display = 'block';
-  document.getElementById('logoutBtn').style.display = 'inline-block';
+  document.getElementById('logoutBtn').style.display = 'inline-flex';
   loadOrders();
 }
 
@@ -29,6 +28,7 @@ async function login() {
 }
 
 function logout() {
+  if (!confirm('Logout from admin?')) return;
   localStorage.removeItem('cs_admin_token');
   token = '';
   location.reload();
@@ -36,18 +36,18 @@ function logout() {
 
 if (token) showApp();
 
-// ===== Tabs =====
 function showTab(name, el) {
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  ['orders', 'products', 'add'].forEach(t => {
+  ['orders', 'products', 'add', 'feedback'].forEach(t => {
     document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
   });
   if (name === 'orders') loadOrders();
   if (name === 'products') loadProducts();
+  if (name === 'feedback') loadFeedback();
 }
 
-// ===== Orders =====
+// ===== ORDERS =====
 async function loadOrders() {
   const status = document.getElementById('statusFilter').value;
   const url = '/api/admin/orders' + (status ? '?status=' + encodeURIComponent(status) : '');
@@ -61,60 +61,64 @@ async function loadOrders() {
 
 function renderOrders(orders) {
   const box = document.getElementById('ordersList');
-  if (!orders.length) { box.innerHTML = '<p style="color:var(--muted)">No orders yet.</p>'; return; }
+  if (!orders.length) { box.innerHTML = '<p style="color:var(--text-soft)">No orders yet.</p>'; return; }
 
   box.innerHTML = orders.map(o => {
     let items = [];
     try { items = JSON.parse(o.items); } catch {}
-    const itemsHTML = items.map(i => `<li>${i.name} (${i.variant}) × ${i.qty} — Rs. ${i.unitPrice * i.qty}</li>`).join('');
+    const itemsHTML = items.map(i => `<li>${escapeHtml(i.name)} (${i.variant}) × ${i.qty} — Rs. ${i.unitPrice * i.qty}</li>`).join('');
     const screenshot = o.payment_screenshot
-      ? `<a href="${o.payment_screenshot}" target="_blank" style="color:var(--accent)">View Screenshot 🖼</a>`
+      ? `<a href="${o.payment_screenshot}" target="_blank" style="color:var(--primary);font-weight:500">View Screenshot</a>`
       : '<span style="color:var(--muted)">No screenshot</span>';
+
+    const waNumber = (o.customer_phone || '').replace(/\D/g,'').replace(/^0/,'92');
+    const waText = encodeURIComponent('Hi ' + o.customer_name + ', regarding your Cake Studio order #' + o.order_code + ': ');
 
     return `
       <div class="order-card">
         <div class="order-head">
           <div>
-            <h3 style="font-family:'Playfair Display',serif">#${o.order_code}</h3>
+            <h3>#${o.order_code}</h3>
             <small style="color:var(--muted)">${new Date(o.created_at).toLocaleString()}</small>
           </div>
           <span class="status-pill status-${o.status}">${o.status}</span>
         </div>
-        <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px">
+
+        <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:18px">
           <div>
-            <b>👤 Customer</b><br>
-            ${o.customer_name}<br>
-            📞 <a href="tel:${o.customer_phone}" style="color:var(--accent)">${o.customer_phone}</a><br>
-            📍 ${o.customer_address}, ${o.city}<br>
-            ${o.delivery_date ? `📅 ${o.delivery_date}<br>` : ''}
-            ${o.notes ? `📝 ${o.notes}` : ''}
+            <div class="order-info-block"><img src="/icons/user.png" alt=""><div><b>${escapeHtml(o.customer_name)}</b></div></div>
+            <div class="order-info-block"><img src="/icons/phone.png" alt=""><div><a href="tel:${o.customer_phone}" style="color:var(--primary)">${o.customer_phone}</a></div></div>
+            <div class="order-info-block"><img src="/icons/location.png" alt=""><div>${escapeHtml(o.customer_address)}, ${escapeHtml(o.city)}</div></div>
+            ${o.delivery_date ? `<div class="order-info-block"><img src="/icons/calendar.png" alt=""><div>${o.delivery_date}</div></div>` : ''}
+            ${o.notes ? `<div class="order-info-block"><b>Notes:</b><div>${escapeHtml(o.notes)}</div></div>` : ''}
           </div>
           <div>
-            <b>💳 Payment</b><br>
-            Method: ${o.payment_method}<br>
-            ${o.sender_name ? `Sender: ${o.sender_name}<br>` : ''}
-            ${o.sender_number ? `Number: ${o.sender_number}<br>` : ''}
-            ${screenshot}<br>
-            <b style="color:var(--accent);font-size:16px">Rs. ${o.total_amount}</b>
+            <div class="order-info-block"><img src="/icons/card.png" alt=""><div><b>${o.payment_method}</b></div></div>
+            ${o.sender_name ? `<div class="order-info-block"><div style="width:14px"></div><div>Sender: ${escapeHtml(o.sender_name)}</div></div>` : ''}
+            ${o.sender_number ? `<div class="order-info-block"><div style="width:14px"></div><div>Number: ${o.sender_number}</div></div>` : ''}
+            <div class="order-info-block"><div style="width:14px"></div><div>${screenshot}</div></div>
+            <div style="margin-top:8px;font-size:18px;color:var(--primary);font-weight:700">Rs. ${o.total_amount}</div>
           </div>
         </div>
-        <div style="margin-top:12px"><b>🧾 Items</b><ul style="margin-left:20px;font-size:13px">${itemsHTML}</ul></div>
 
-        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-          <select id="st_${o.id}" style="background:var(--bg-2);color:var(--text);padding:8px 12px;border:1px solid rgba(255,255,255,.1);border-radius:10px">
+        <div style="margin-top:14px">
+          <div class="order-info-block"><img src="/icons/list.png" alt=""><div><b>Items</b></div></div>
+          <ul style="margin-left:24px;font-size:13px;color:var(--text-soft);line-height:1.7">${itemsHTML}</ul>
+        </div>
+
+        <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <select id="st_${o.id}" class="admin-input">
             ${['Pending','Confirmed','Preparing','Out for Delivery','Delivered','Cancelled']
               .map(s => `<option ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}
           </select>
-          <input id="et_${o.id}" placeholder="Est. time (e.g. Today 6PM)" value="${o.estimated_time || ''}"
-            style="background:var(--bg-2);color:var(--text);padding:8px 12px;border:1px solid rgba(255,255,255,.1);border-radius:10px;flex:1;min-width:160px">
+          <input id="et_${o.id}" placeholder="Est. time (e.g. Today 6PM)" value="${o.estimated_time || ''}" class="admin-input" style="flex:1;min-width:160px">
           <button class="btn-ghost" onclick="updateOrder(${o.id})">Update</button>
         </div>
-        <div style="margin-top:10px;display:flex;gap:8px">
-          <input id="msg_${o.id}" placeholder="Message to customer" value="${o.admin_message || ''}"
-            style="background:var(--bg-2);color:var(--text);padding:8px 12px;border:1px solid rgba(255,255,255,.1);border-radius:10px;flex:1">
-          <button class="btn-ghost" onclick="sendMsg(${o.id})">Save Msg</button>
-          <a href="https://wa.me/${(o.customer_phone || '').replace(/\D/g,'').replace(/^0/,'92')}?text=${encodeURIComponent('Hi ' + o.customer_name + ', your Cake Studio order #' + o.order_code + ' update: ')}"
-            target="_blank" class="btn-ghost" style="background:#25D366;color:#fff;border:none">💬 WhatsApp</a>
+
+        <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+          <input id="msg_${o.id}" placeholder="Send message to customer's account inbox" value="" class="admin-input" style="flex:1">
+          <button class="btn-ghost" onclick="sendCustomerMsg('${o.customer_phone}', ${o.id})">Send Msg</button>
+          <a href="https://wa.me/${waNumber}?text=${waText}" target="_blank" class="wa-btn">WhatsApp</a>
         </div>
       </div>`;
   }).join('');
@@ -128,32 +132,39 @@ async function updateOrder(id) {
       method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({ status, estimated_time })
     });
-    if (res.ok) { showToast('Order updated ✅'); loadOrders(); }
+    if (res.ok) { showToast('Order updated'); loadOrders(); }
     else showToast('Update failed', false);
   } catch { showToast('Update failed', false); }
 }
 
-async function sendMsg(id) {
-  const admin_message = document.getElementById('msg_' + id).value;
+async function sendCustomerMsg(phone, id) {
+  const message = document.getElementById('msg_' + id).value.trim();
+  if (!message) { showToast('Type a message first', false); return; }
+  if (!phone) { showToast('No customer phone', false); return; }
   try {
-    const res = await fetch('/api/admin/orders/' + id, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ admin_message })
+    const res = await fetch('/api/admin/sendmessage', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ phone, message })
     });
-    if (res.ok) showToast('Message saved ✅');
-    else showToast('Failed', false);
+    const data = await res.json();
+    if (data.success) {
+      showToast('Message sent to customer inbox');
+      document.getElementById('msg_' + id).value = '';
+    } else {
+      showToast(data.error || 'Failed', false);
+    }
   } catch { showToast('Failed', false); }
 }
 
-// ===== Products =====
+// ===== PRODUCTS =====
 async function loadProducts() {
   try {
     const res = await fetch('/api/products');
     const list = await res.json();
     const box = document.getElementById('prodList');
-    if (!list.length) { box.innerHTML = '<p style="color:var(--muted)">No products.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p style="color:var(--text-soft)">No products.</p>'; return; }
     box.innerHTML = list.map(p => {
-      const img = p.image_url || `https://via.placeholder.com/300x200/33231d/e58a4a?text=${encodeURIComponent(p.name)}`;
+      const img = p.image_url || `https://placehold.co/300x200/fce4ec/e9779a?text=${encodeURIComponent(p.name)}`;
       let price = '';
       if (p.price_per_piece) price = `Rs. ${p.price_per_piece}/pc`;
       else if (p.price_1pound && p.price_2pound) price = `Rs. ${p.price_1pound} / ${p.price_2pound}`;
@@ -161,13 +172,13 @@ async function loadProducts() {
       else if (p.price_1pound) price = `Rs. ${p.price_1pound}`;
       return `
         <div class="card">
-          <div class="card-img"><img src="${img}" onerror="this.src='https://via.placeholder.com/300x200/33231d/e58a4a?text=${encodeURIComponent(p.name)}'"></div>
+          <div class="card-img"><img src="${img}" onerror="this.src='https://placehold.co/300x200/fce4ec/e9779a?text=${encodeURIComponent(p.name)}'"></div>
           <div class="card-body">
-            <h3>${p.name}</h3>
-            <p>${p.description || ''}</p>
+            <h3>${escapeHtml(p.name)}</h3>
+            <p>${escapeHtml(p.description || '')}</p>
             <div class="price-row">
               <span class="price">${price}</span>
-              <button class="add-btn" style="background:var(--danger)" onclick="deleteProduct(${p.id})">×</button>
+              <button class="add-btn" style="background:var(--danger);box-shadow:none" onclick="deleteProduct(${p.id})">×</button>
             </div>
           </div>
         </div>`;
@@ -176,7 +187,7 @@ async function loadProducts() {
 }
 
 async function deleteProduct(id) {
-  if (!confirm('Delete this product?')) return;
+  if (!confirm('Delete this product permanently?')) return;
   const res = await fetch('/api/admin/products/' + id, {
     method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token }
   });
@@ -221,17 +232,60 @@ async function addProduct() {
       body: JSON.stringify({ name, category, description, price_1pound, price_2pound, price_per_piece, image_url })
     });
     if (res.ok) {
-      showToast('Product added ✅');
+      showToast('Product added');
       ['p_name','p_desc','p_p1','p_p2','p_pp','p_img'].forEach(id => document.getElementById(id).value = '');
     } else showToast('Failed', false);
   } catch { showToast('Failed', false); }
   btn.disabled = false; btn.textContent = 'Add Product';
 }
 
+// ===== FEEDBACK =====
+async function loadFeedback() {
+  try {
+    const res = await fetch('/api/admin/feedback', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (res.status === 401) { logout(); return; }
+    const list = await res.json();
+    const box = document.getElementById('feedbackList');
+    if (!list.length) { box.innerHTML = '<p style="color:var(--text-soft)">No feedback yet.</p>'; return; }
+    box.innerHTML = list.map(r => {
+      let stars = '';
+      for (let i = 1; i <= 5; i++) {
+        stars += `<img src="/icons/star.png" class="${i<=r.rating?'on':'off'}" style="width:14px;height:14px" alt="">`;
+      }
+      const date = new Date(r.created_at).toLocaleString();
+      return `
+        <div class="order-card">
+          <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:10px">
+            <div>
+              <div style="display:flex;gap:4px;margin-bottom:6px">${stars}</div>
+              <h3 style="font-size:16px">${escapeHtml(r.customer_name)} ${r.order_code?`<small style="color:var(--muted);font-weight:400">— ${r.order_code}</small>`:''}</h3>
+              <p style="color:var(--text-soft);font-size:14px;line-height:1.6;margin-top:8px;font-style:italic">"${escapeHtml(r.message)}"</p>
+              <small style="color:var(--muted);font-size:11px">${date}</small>
+            </div>
+            <button class="btn-ghost" onclick="deleteFeedback(${r.id})" style="color:var(--danger);border-color:#f5b5b5">Delete</button>
+          </div>
+        </div>`;
+    }).join('');
+  } catch {}
+}
+
+async function deleteFeedback(id) {
+  if (!confirm('Delete this feedback?')) return;
+  const res = await fetch('/api/admin/feedback/' + id, {
+    method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token }
+  });
+  if (res.ok) { showToast('Deleted'); loadFeedback(); }
+  else showToast('Failed', false);
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+}
+
 function showToast(msg, ok = true) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.style.borderLeftColor = ok ? 'var(--accent)' : 'var(--danger)';
+  t.style.borderLeftColor = ok ? 'var(--primary)' : 'var(--danger)';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
