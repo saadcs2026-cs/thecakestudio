@@ -39,7 +39,15 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .nav{position:sticky;top:0;z-index:50;background:rgba(255,245,247,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);box-shadow:0 2px 16px rgba(233,119,154,.08)}
 .nav-inner{max-width:1280px;margin:auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{display:flex;align-items:center;gap:14px;cursor:pointer}
-.brand-logo{width:54px;height:54px;border-radius:50%;object-fit:contain;background:#fff;padding:2px;border:2px solid var(--primary);box-shadow:0 4px 14px rgba(233,119,154,.3);flex-shrink:0}
+.brand-logo{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  object-fit:cover;
+  background:transparent;
+  flex-shrink:0;
+  filter:drop-shadow(0 4px 8px rgba(233,119,154,.25));
+}
 .brand-name{font-family:'Dancing Script',cursive;font-size:28px;color:var(--primary);line-height:1;font-weight:700}
 .brand-sub{font-size:10px;color:var(--muted);letter-spacing:2.5px;text-transform:uppercase;font-weight:500}
 .nav-links{display:flex;gap:28px;align-items:center}
@@ -224,7 +232,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   .section-head h2{font-size:28px}
   .brand-name{font-size:22px}
   .brand-sub{font-size:9px}
-  .brand-logo{width:46px;height:46px}
+  .brand-logo{width:50px;height:50px}
   .cart-btn span:not(.cart-count){display:none}
   .cart-btn{padding:10px 14px}
   .acc-name{display:none}
