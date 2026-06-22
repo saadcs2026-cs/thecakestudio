@@ -160,7 +160,22 @@ async function sendCustomerMsg(phone, id) {
     }
   } catch { showToast('Failed', false); }
 }
-
+async function deleteOrder(id, code) {
+  if (!confirm(`Delete order #${code}?\n\nThis cannot be undone.`)) return;
+  try {
+    const res = await fetch('/api/admin/orders/' + id, {
+      method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (res.ok) {
+      showToast('Order deleted');
+      loadOrders();
+    } else {
+      showToast('Delete failed', false);
+    }
+  } catch {
+    showToast('Delete failed', false);
+  }
+}
 // ===== PRODUCTS =====
 async function loadProducts() {
   try {
