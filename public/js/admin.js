@@ -115,7 +115,7 @@ function renderOrders(orders) {
           <button class="btn-ghost" onclick="updateOrder(${o.id})">Update</button>
         </div>
 
-       <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+        <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
           <input id="msg_${o.id}" placeholder="Send message to customer's account inbox" value="" class="admin-input" style="flex:1">
           <button class="btn-ghost" onclick="sendCustomerMsg('${o.customer_phone}', ${o.id})">Send Msg</button>
           <a href="https://wa.me/${waNumber}?text=${waText}" target="_blank" class="wa-btn">WhatsApp</a>
@@ -124,7 +124,6 @@ function renderOrders(orders) {
         <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--border);text-align:right">
           <button class="btn-ghost" onclick="deleteOrder(${o.id}, '${o.order_code}')" style="color:var(--danger);border-color:#f5b5b5">Delete Order</button>
         </div>
-      </div>`;
       </div>`;
   }).join('');
 }
@@ -160,8 +159,9 @@ async function sendCustomerMsg(phone, id) {
     }
   } catch { showToast('Failed', false); }
 }
+
 async function deleteOrder(id, code) {
-  if (!confirm(`Delete order #${code}?\n\nThis cannot be undone.`)) return;
+  if (!confirm('Delete order #' + code + '?\n\nThis cannot be undone.')) return;
   try {
     const res = await fetch('/api/admin/orders/' + id, {
       method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token }
@@ -176,6 +176,7 @@ async function deleteOrder(id, code) {
     showToast('Delete failed', false);
   }
 }
+
 // ===== PRODUCTS =====
 async function loadProducts() {
   try {
@@ -184,7 +185,7 @@ async function loadProducts() {
     const box = document.getElementById('prodList');
     if (!list.length) { box.innerHTML = '<p style="color:var(--text-soft)">No products.</p>'; return; }
     box.innerHTML = list.map(p => {
-      const img = p.image_url || `https://placehold.co/300x200/fce4ec/e9779a?text=${encodeURIComponent(p.name)}`;
+      const img = p.image_url || 'https://placehold.co/300x200/fce4ec/e9779a?text=' + encodeURIComponent(p.name);
       let price = '';
       if (p.price_per_piece) price = `Rs. ${p.price_per_piece}/pc`;
       else if (p.price_1pound && p.price_2pound) price = `Rs. ${p.price_1pound} / ${p.price_2pound}`;
