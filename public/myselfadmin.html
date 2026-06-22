@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin Panel - The Cake Studio</title>
+<meta name="robots" content="noindex,nofollow">
+
+<link rel="icon" type="image/png" sizes="any" href="/images/logo.png">
+<link rel="apple-touch-icon" href="/images/logo.png">
+<meta name="theme-color" content="#e9779a">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">
+      <img src="/images/logo.png" alt="The Cake Studio" class="brand-logo">
+      <div>
+        <div class="brand-name">The Cake Studio</div>
+        <div class="brand-sub">Admin Panel</div>
+      </div>
+    </a>
+    <button class="btn-ghost" onclick="logout()" id="logoutBtn" style="display:none">Logout</button>
+  </div>
+</nav>
+
+<div id="loginBox" class="form-wrap" style="max-width:420px">
+  <h2>Admin Login</h2>
+  <div class="field">
+    <label>Username</label>
+    <input id="lg_user">
+  </div>
+  <div class="field">
+    <label>Password</label>
+    <input id="lg_pass" type="password">
+  </div>
+  <button class="btn-primary" onclick="login()">Sign In</button>
+</div>
+
+<div class="admin-wrap" id="dashBox" style="display:none">
+  <div class="admin-tabs">
+    <div class="admin-tab active" onclick="showTab('orders',this)">
+      <img src="/icons/orders.png" alt=""> Orders
+    </div>
+    <div class="admin-tab" onclick="showTab('products',this)">
+      <img src="/icons/products.png" alt=""> Products
+    </div>
+    <div class="admin-tab" onclick="showTab('add',this)">
+      <img src="/icons/add.png" alt=""> Add Product
+    </div>
+    <div class="admin-tab" onclick="showTab('feedback',this)">
+      <img src="/icons/star.png" alt=""> Feedback
+    </div>
+  </div>
+
+  <!-- ORDERS -->
+  <div id="tab-orders">
+    <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+      <select id="statusFilter" onchange="loadOrders()" class="admin-input">
+        <option value="">All Orders</option>
+        <option>Pending</option><option>Confirmed</option><option>Preparing</option>
+        <option>Out for Delivery</option><option>Delivered</option><option>Cancelled</option>
+      </select>
+      <button class="btn-ghost" onclick="loadOrders()">Refresh</button>
+    </div>
+    <div id="ordersList"></div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div id="tab-products" style="display:none">
+    <div id="prodList" class="grid"></div>
+  </div>
+
+  <!-- ADD PRODUCT -->
+  <div id="tab-add" style="display:none">
+    <div class="form-wrap">
+      <h2>Add New Product</h2>
+      <div class="row2">
+        <div class="field"><label>Name *</label><input id="p_name"></div>
+        <div class="field">
+          <label>Category *</label>
+          <select id="p_cat">
+            <option>Cake</option><option>Brownie</option><option>Pastry</option><option>Cupcake</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Description</label><textarea id="p_desc" rows="2"></textarea></div>
+      <div class="row2">
+        <div class="field"><label>Price 1 Pound (PKR) — for cakes</label><input id="p_p1" type="number"></div>
+        <div class="field"><label>Price 2 Pound (PKR) — for cakes</label><input id="p_p2" type="number"></div>
+      </div>
+      <div class="field"><label>Price per piece (PKR) — for brownies/pastries/cupcakes</label><input id="p_pp" type="number"></div>
+      <div class="field"><label>Upload Image</label><input type="file" id="p_img" accept="image/*"></div>
+      <button class="btn-primary" id="addBtn" onclick="addProduct()">Add Product</button>
+    </div>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div id="tab-feedback" style="display:none">
+    <div id="feedbackList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/js/admin.js"></script>
+</body>
+</html>
