@@ -1,3 +1,14 @@
+// ===== Smooth Scroll =====
+function scrollTo(id, e) {
+  if (e) e.preventDefault();
+  const el = document.getElementById(id);
+  if (el) {
+    const offset = 80; // navbar height
+    const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+}
+
 // ===== Global Cart =====
 let cart = JSON.parse(localStorage.getItem('cs_cart') || '[]');
 let products = [];
@@ -43,6 +54,42 @@ function renderProducts() {
   }).join('');
 }
 
+// ===== Load Reviews =====
+async function loadReviews() {
+  try {
+    const res = await fetch('/api/feedback');
+    const list = await res.json();
+    const box = document.getElementById('reviewsGrid');
+    if (!list.length) {
+      box.innerHTML = '<p style="color:var(--muted)">No reviews yet. Be the first to order and review! 🎂</p>';
+      return;
+    }
+    box.innerHTML = list.map(r => {
+      const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+      const initial = (r.customer_name || '?').charAt(0).toUpperCase();
+      const date = new Date(r.created_at).toLocaleDateString('en-PK', { day:'numeric', month:'short', year:'numeric' });
+      return `
+        <div class="review-card">
+          <div class="review-stars">${stars}</div>
+          <p class="review-msg">"${escapeHtml(r.message)}"</p>
+          <div class="review-author">
+            <div class="review-avatar">${initial}</div>
+            <div>
+              <div class="review-name">${escapeHtml(r.customer_name)}</div>
+              <div class="review-date">${date}</div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch {
+    document.getElementById('reviewsGrid').innerHTML = '<p style="color:var(--muted)">No reviews yet.</p>';
+  }
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+}
+
 // ===== Categories =====
 document.addEventListener('click', e => {
   if (e.target.classList.contains('cat')) {
@@ -58,7 +105,6 @@ function addToCart(id) {
   const p = products.find(x => x.id === id);
   if (!p) return;
 
-  // For cakes, ask size (1lb / 2lb)
   let variant = 'piece';
   let unitPrice = 0;
 
@@ -167,4 +213,5 @@ function showToast(msg) {
 }
 
 loadProducts();
+loadReviews();
 renderCart();
