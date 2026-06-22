@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Checkout - The Cake Studio</title>
+<meta name="description" content="Complete your cake order at The Cake Studio. Easy payment via Bank, EasyPaisa or Cash on Delivery.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/images/logo.png">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">
+      <img src="/images/logo.png" onerror="this.src='https://via.placeholder.com/46/e9779a/fff?text=CS'">
+      <div>
+        <div class="brand-name">The Cake Studio</div>
+        <div class="brand-sub">Checkout</div>
+      </div>
+    </a>
+    <a href="/" class="btn-ghost">← Back to Menu</a>
+  </div>
+</nav>
+
+<div class="form-wrap">
+  <h2>🧾 Order Summary</h2>
+  <div id="orderSummary" style="margin:14px 0 24px;background:var(--bg-2);padding:16px;border-radius:14px"></div>
+
+  <h2>📍 Delivery Details</h2>
+  <div class="field">
+    <label>Full Name *</label>
+    <input id="customer_name" required>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label>Phone Number *</label>
+      <input id="customer_phone" placeholder="03XX-XXXXXXX" required>
+    </div>
+    <div class="field">
+      <label>City *</label>
+      <select id="city" required>
+        <option value="">Select city...</option>
+        <option value="Hyderabad">Hyderabad</option>
+      </select>
+      <small style="color:var(--muted);font-size:11px">Currently we deliver in Hyderabad only.</small>
+    </div>
+  </div>
+  <div class="field">
+    <label>Complete Address *</label>
+    <textarea id="customer_address" rows="3" placeholder="House #, Street, Area, Landmark" required></textarea>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label>Preferred Delivery Date</label>
+      <input id="delivery_date" type="date">
+    </div>
+    <div class="field">
+      <label>Special Notes (cake message, allergies etc.)</label>
+      <input id="notes">
+    </div>
+  </div>
+
+  <h2 style="margin-top:20px">💳 Payment Method</h2>
+  <div class="field">
+    <select id="payment_method" onchange="togglePayment()">
+      <option value="">Select method...</option>
+      <option value="EasyPaisa">EasyPaisa</option>
+      <option value="Bank">Bank Transfer</option>
+      <option value="COD">Cash on Delivery</option>
+    </select>
+  </div>
+
+  <div id="paymentDetails" style="display:none">
+    <div style="background:var(--bg-2);padding:14px;border-radius:12px;margin-bottom:14px;font-size:13px">
+      <div id="paymentInfo"></div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Sender Name *</label>
+        <input id="sender_name">
+      </div>
+      <div class="field">
+        <label>Sender Number *</label>
+        <input id="sender_number" placeholder="03XX-XXXXXXX">
+      </div>
+    </div>
+    <div class="field">
+      <label>Upload Payment Screenshot *</label>
+      <input type="file" id="screenshot" accept="image/*">
+      <small style="color:var(--muted);font-size:11px">JPG / PNG. Max 5MB.</small>
+    </div>
+  </div>
+
+  <button class="btn-primary" id="placeBtn" onclick="placeOrder()">Place Order</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/js/order.js"></script>
+</body>
+</html>
