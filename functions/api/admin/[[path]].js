@@ -59,6 +59,16 @@ export async function onRequest(context) {
     await env.DB.prepare(`UPDATE orders SET ${fields.join(', ')} WHERE id = ?`).bind(...values).run();
     return json({ success: true });
   }
+    // DELETE ORDER
+  if (orderMatch && method === 'DELETE') {
+    const id = orderMatch[1];
+    try {
+      await env.DB.prepare('DELETE FROM orders WHERE id = ?').bind(id).run();
+      return json({ success: true });
+    } catch (e) {
+      return json({ error: e.message }, 500);
+    }
+  }
 
   // SEND MESSAGE to customer inbox
   if (path === 'sendmessage' && method === 'POST') {
