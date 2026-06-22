@@ -28,7 +28,7 @@
 <!-- Navbar -->
 <nav class="nav">
   <div class="nav-inner">
-    <a href="/" class="brand">
+    <a href="#home" class="brand" onclick="scrollTo('home',event)">
       <img src="/images/logo.png" alt="The Cake Studio" onerror="this.src='https://via.placeholder.com/46/e9779a/fff?text=CS'">
       <div>
         <div class="brand-name">The Cake Studio</div>
@@ -36,10 +36,10 @@
       </div>
     </a>
     <div class="nav-links">
-      <a href="#menu">Menu</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="/admin.html">Admin</a>
+      <a href="#menu" onclick="scrollTo('menu',event)">Menu</a>
+      <a href="#about" onclick="scrollTo('about',event)">About</a>
+      <a href="#reviews" onclick="scrollTo('reviews',event)">Reviews</a>
+      <a href="#contact" onclick="scrollTo('contact',event)">Contact</a>
     </div>
     <button class="cart-btn" onclick="openCart()">
       🛒 <span id="cartCount">0</span>
@@ -48,11 +48,11 @@
 </nav>
 
 <!-- Hero -->
-<section class="hero">
+<section class="hero" id="home">
   <div class="hero-text">
     <h1>Baked with <span>Love</span>,<br>Shared with Joy</h1>
     <p>Happiness is just a click away — make your moments and celebrations more special with freshly baked cakes, brownies and pastries from our home kitchen in Hyderabad.</p>
-    <button class="hero-btn" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Explore Menu →</button>
+    <button class="hero-btn" onclick="scrollTo('menu')">Explore Menu →</button>
     <p style="margin-top:20px;font-size:12px;color:var(--accent)">🎉 10% Discount on your first order!</p>
   </div>
   <div class="hero-image">
@@ -92,6 +92,19 @@
   </p>
 </section>
 
+<!-- Reviews -->
+<section class="section" id="reviews">
+  <div class="section-head">
+    <div>
+      <h2>What Our Customers Say 💖</h2>
+      <p>Real feedback from happy cake lovers</p>
+    </div>
+  </div>
+  <div class="reviews-grid" id="reviewsGrid">
+    <p style="color:var(--muted)">Loading reviews...</p>
+  </div>
+</section>
+
 <!-- Contact -->
 <footer class="footer" id="contact">
   <h3>The Cake Studio</h3>
@@ -103,6 +116,7 @@
     <a href="https://wa.me/923343920775" target="_blank">WhatsApp</a>
   </div>
   <p style="margin-top:20px;font-size:11px;opacity:.6">© 2025 The Cake Studio. All rights reserved.</p>
+  <p style="margin-top:8px;font-size:10px;opacity:.3"><a href="/admin.html" style="color:inherit">·</a></p>
 </footer>
 
 <!-- Cart Side Panel -->
