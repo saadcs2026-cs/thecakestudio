@@ -115,11 +115,16 @@ function renderOrders(orders) {
           <button class="btn-ghost" onclick="updateOrder(${o.id})">Update</button>
         </div>
 
-        <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+       <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
           <input id="msg_${o.id}" placeholder="Send message to customer's account inbox" value="" class="admin-input" style="flex:1">
           <button class="btn-ghost" onclick="sendCustomerMsg('${o.customer_phone}', ${o.id})">Send Msg</button>
           <a href="https://wa.me/${waNumber}?text=${waText}" target="_blank" class="wa-btn">WhatsApp</a>
         </div>
+
+        <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--border);text-align:right">
+          <button class="btn-ghost" onclick="deleteOrder(${o.id}, '${o.order_code}')" style="color:var(--danger);border-color:#f5b5b5">Delete Order</button>
+        </div>
+      </div>`;
       </div>`;
   }).join('');
 }
