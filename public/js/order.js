@@ -5,7 +5,7 @@ const PAYMENT_INFO = {
 };
 
 // ⚠️ REPLACE with your Cloudinary cloud name
-const CLOUDINARY_CLOUD = 'YOUR_CLOUD_NAME';
+const CLOUDINARY_CLOUD = 'dmvcr0fub';
 const CLOUDINARY_PRESET = 'cake_studio_unsigned';
 
 const cart = JSON.parse(localStorage.getItem('cs_cart') || '[]');
