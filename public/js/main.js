@@ -1,20 +1,26 @@
-// ===== Smooth Scroll =====
-function scrollTo(id, e) {
-  if (e) e.preventDefault();
-  const el = document.getElementById(id);
-  if (el) {
-    const offset = 80; // navbar height
-    const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
-    window.scrollTo({ top, behavior: 'smooth' });
-  }
-}
+// ============ NAVIGATION (FIXED) ============
+document.addEventListener('DOMContentLoaded', () => {
+  // Attach click handler to ALL elements with .js-scroll class
+  document.querySelectorAll('.js-scroll').forEach(el => {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('data-target');
+      const target = document.getElementById(targetId);
+      if (target) {
+        const navHeight = 80;
+        const targetTop = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+      }
+    });
+  });
+});
 
-// ===== Global Cart =====
+// ============ STATE ============
 let cart = JSON.parse(localStorage.getItem('cs_cart') || '[]');
 let products = [];
 let currentCat = 'All';
 
-// ===== Load Products =====
+// ============ LOAD PRODUCTS ============
 async function loadProducts() {
   try {
     const res = await fetch('/api/products');
@@ -31,7 +37,7 @@ function renderProducts() {
   if (!list.length) { grid.innerHTML = '<p style="color:var(--muted)">No items in this category.</p>'; return; }
 
   grid.innerHTML = list.map(p => {
-    const img = p.image_url || `https://via.placeholder.com/300x200/33231d/e58a4a?text=${encodeURIComponent(p.name)}`;
+    const img = p.image_url || `https://placehold.co/300x200/33231d/e58a4a?text=${encodeURIComponent(p.name)}`;
     let priceLabel = '';
     if (p.price_per_piece) priceLabel = `Rs. ${p.price_per_piece}/pc`;
     else if (p.price_1pound) priceLabel = `Rs. ${p.price_1pound}`;
@@ -39,7 +45,7 @@ function renderProducts() {
     return `
       <div class="card">
         <div class="card-img">
-          <img src="${img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x200/33231d/e58a4a?text=${encodeURIComponent(p.name)}'">
+          <img src="${img}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/300x200/33231d/e58a4a?text=${encodeURIComponent(p.name)}'">
           <span class="card-badge">${p.category}</span>
         </div>
         <div class="card-body">
@@ -54,13 +60,13 @@ function renderProducts() {
   }).join('');
 }
 
-// ===== Load Reviews =====
+// ============ LOAD REVIEWS ============
 async function loadReviews() {
   try {
     const res = await fetch('/api/feedback');
     const list = await res.json();
     const box = document.getElementById('reviewsGrid');
-    if (!list.length) {
+    if (!Array.isArray(list) || !list.length) {
       box.innerHTML = '<p style="color:var(--muted)">No reviews yet. Be the first to order and review! 🎂</p>';
       return;
     }
@@ -90,7 +96,7 @@ function escapeHtml(s) {
   return String(s || '').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
 }
 
-// ===== Categories =====
+// ============ CATEGORIES ============
 document.addEventListener('click', e => {
   if (e.target.classList.contains('cat')) {
     document.querySelectorAll('.cat').forEach(c => c.classList.remove('active'));
@@ -100,11 +106,10 @@ document.addEventListener('click', e => {
   }
 });
 
-// ===== Cart Functions =====
+// ============ CART ============
 function addToCart(id) {
   const p = products.find(x => x.id === id);
   if (!p) return;
-
   let variant = 'piece';
   let unitPrice = 0;
 
@@ -171,10 +176,10 @@ function renderCart() {
   box.innerHTML = cart.map(i => {
     const sub = i.unitPrice * i.qty;
     total += sub;
-    const img = i.image || `https://via.placeholder.com/60/33231d/e58a4a?text=🎂`;
+    const img = i.image || `https://placehold.co/60/33231d/e58a4a?text=🎂`;
     return `
       <div class="cart-item">
-        <img src="${img}" onerror="this.src='https://via.placeholder.com/60/33231d/e58a4a?text=🎂'">
+        <img src="${img}" onerror="this.src='https://placehold.co/60/33231d/e58a4a?text=🎂'">
         <div class="cart-item-info">
           <h4>${i.name}</h4>
           <small>${i.variant} • Rs. ${i.unitPrice}</small>
@@ -212,6 +217,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+// ============ INIT ============
 loadProducts();
 loadReviews();
 renderCart();
