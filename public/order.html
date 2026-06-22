@@ -4,12 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Checkout - The Cake Studio</title>
-<meta name="description" content="Complete your cake order at The Cake Studio. Easy payment via Bank, EasyPaisa or Cash on Delivery.">
+<meta name="description" content="Complete your cake order at The Cake Studio.">
 <meta name="robots" content="noindex">
-<link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
-<link rel="shortcut icon" href="/images/logo.png" type="image/png">
+
+<link rel="icon" type="image/png" sizes="any" href="/images/logo.png">
 <link rel="apple-touch-icon" href="/images/logo.png">
-<meta name="theme-color" content="#1f1410">
+<meta name="theme-color" content="#e9779a">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -17,21 +20,25 @@
 <nav class="nav">
   <div class="nav-inner">
     <a href="/" class="brand">
-      <img src="/images/logo.png" alt="Logo" class="brand-logo">
+      <img src="/images/logo.png" alt="The Cake Studio" class="brand-logo">
       <div>
         <div class="brand-name">The Cake Studio</div>
         <div class="brand-sub">Checkout</div>
       </div>
     </a>
-    <a href="/" class="btn-ghost">← Back to Menu</a>
+    <a href="/" class="btn-ghost">Back to Menu</a>
   </div>
 </nav>
 
 <div class="form-wrap">
-  <h2>🧾 Order Summary</h2>
-  <div id="orderSummary" style="margin:14px 0 24px;background:var(--bg-2);padding:16px;border-radius:14px"></div>
+  <div id="loginNotice" style="display:none;background:var(--primary-light);padding:14px 18px;border-radius:14px;margin-bottom:20px;font-size:13px;color:var(--text);border-left:4px solid var(--primary)">
+    <strong>Tip:</strong> <button class="text-link" onclick="location.href='/'" style="font-weight:600">Login or create an account</button> to track this order and get updates.
+  </div>
 
-  <h2>📍 Delivery Details</h2>
+  <h2>Order Summary</h2>
+  <div id="orderSummary" style="margin:14px 0 24px;background:var(--bg);padding:18px;border-radius:14px;border:1px solid var(--border)"></div>
+
+  <h2>Delivery Details</h2>
   <div class="field">
     <label>Full Name *</label>
     <input id="customer_name" required>
@@ -60,12 +67,12 @@
       <input id="delivery_date" type="date">
     </div>
     <div class="field">
-      <label>Special Notes (cake message, allergies etc.)</label>
+      <label>Special Notes (cake message, allergies, etc.)</label>
       <input id="notes">
     </div>
   </div>
 
-  <h2 style="margin-top:20px">💳 Payment Method</h2>
+  <h2 style="margin-top:20px">Payment Method</h2>
   <div class="field">
     <select id="payment_method" onchange="togglePayment()">
       <option value="">Select method...</option>
@@ -76,7 +83,7 @@
   </div>
 
   <div id="paymentDetails" style="display:none">
-    <div style="background:var(--bg-2);padding:14px;border-radius:12px;margin-bottom:14px;font-size:13px">
+    <div style="background:var(--bg);padding:14px;border-radius:12px;margin-bottom:14px;font-size:13px;border:1px solid var(--border)">
       <div id="paymentInfo"></div>
     </div>
     <div class="row2">
@@ -99,18 +106,16 @@
   <button class="btn-primary" id="placeBtn" onclick="placeOrder()">Place Order</button>
 </div>
 
-<!-- Feedback Popup Modal -->
 <div class="modal-overlay" id="feedbackModal">
   <div class="modal-box">
-    <div style="text-align:center;font-size:48px;margin-bottom:8px">⭐</div>
-    <h2 style="text-align:center;font-family:'Playfair Display',serif">Loved Our Service?</h2>
-    <p style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px">
-      Share your experience with future customers 💖
+    <h2>Loved Our Service?</h2>
+    <p style="text-align:center;color:var(--text-soft);font-size:13px;margin-bottom:14px">
+      Share your experience with future customers
     </p>
 
     <div class="field">
       <label>Your Name</label>
-      <input id="fb_name" placeholder="How should we display your name?">
+      <input id="fb_name" placeholder="Display name for review">
     </div>
 
     <div class="field">
@@ -127,8 +132,8 @@
     </div>
 
     <div style="display:flex;gap:10px;margin-top:14px">
-      <button class="btn-ghost" style="flex:1" onclick="closeFeedback()">Maybe Later</button>
-      <button class="btn-primary" style="flex:1;margin:0" onclick="submitFeedback()">Submit Review</button>
+      <button class="btn-ghost" style="flex:1;justify-content:center" onclick="closeFeedback()">Maybe Later</button>
+      <button class="btn-primary" style="flex:1.5;margin:0" onclick="submitFeedback()">Submit Review</button>
     </div>
   </div>
 </div>
