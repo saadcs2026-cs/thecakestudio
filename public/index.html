@@ -5,45 +5,37 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>The Cake Studio - Home Bakery in Hyderabad | Order Cakes Online</title>
 
-<!-- SEO Meta -->
-<meta name="description" content="The Cake Studio - Home bakery in Hyderabad, Sindh. Order fresh customized cakes, brownies, cupcakes and pastries online. Baked with love, shared with joy.">
-<meta name="keywords" content="cake studio, home bakery hyderabad, customized cakes, online cake order pakistan, brownies, cupcakes, pastries, hyderabad sindh">
+<meta name="description" content="The Cake Studio - Home bakery in Hyderabad, Sindh. Order fresh customized cakes, brownies, cupcakes and pastries online.">
+<meta name="keywords" content="cake studio, home bakery hyderabad, customized cakes, online cake order pakistan, brownies, cupcakes, pastries">
 <meta name="author" content="The Cake Studio">
 <meta name="robots" content="index,follow">
 
-<!-- Open Graph -->
 <meta property="og:title" content="The Cake Studio - Order Fresh Cakes Online">
-<meta property="og:description" content="Customized cakes, brownies & pastries baked fresh in Hyderabad. Order online with easy payment options.">
+<meta property="og:description" content="Customized cakes, brownies & pastries baked fresh in Hyderabad.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="/images/logo.png">
-<meta property="og:locale" content="en_PK">
 
-<!-- Performance: Preconnect to fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<!-- Favicon -->
 <link rel="icon" type="image/png" href="/images/logo.png">
-
 <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<!-- Navbar -->
 <nav class="nav">
   <div class="nav-inner">
-    <a href="#home" class="brand" onclick="scrollTo('home',event)">
-      <img src="/images/logo.png" alt="The Cake Studio" onerror="this.src='https://via.placeholder.com/46/e9779a/fff?text=CS'">
+    <a href="#home" class="brand js-scroll" data-target="home">
+      <img src="/images/logo.png" alt="The Cake Studio" onerror="this.style.display='none'">
       <div>
         <div class="brand-name">The Cake Studio</div>
         <div class="brand-sub">Home Bakery</div>
       </div>
     </a>
     <div class="nav-links">
-      <a href="#menu" onclick="scrollTo('menu',event)">Menu</a>
-      <a href="#about" onclick="scrollTo('about',event)">About</a>
-      <a href="#reviews" onclick="scrollTo('reviews',event)">Reviews</a>
-      <a href="#contact" onclick="scrollTo('contact',event)">Contact</a>
+      <a href="#menu" class="js-scroll" data-target="menu">Menu</a>
+      <a href="#about" class="js-scroll" data-target="about">About</a>
+      <a href="#reviews" class="js-scroll" data-target="reviews">Reviews</a>
+      <a href="#contact" class="js-scroll" data-target="contact">Contact</a>
     </div>
     <button class="cart-btn" onclick="openCart()">
       🛒 <span id="cartCount">0</span>
@@ -51,24 +43,18 @@
   </div>
 </nav>
 
-<!-- Hero -->
 <section class="hero" id="home">
   <div class="hero-text">
     <h1>Baked with <span>Love</span>,<br>Shared with Joy</h1>
     <p>Happiness is just a click away — make your moments and celebrations more special with freshly baked cakes, brownies and pastries from our home kitchen in Hyderabad.</p>
-    <button class="hero-btn" onclick="scrollTo('menu')">Explore Menu →</button>
+    <button class="hero-btn js-scroll" data-target="menu">Explore Menu →</button>
     <p style="margin-top:20px;font-size:12px;color:var(--accent)">🎉 10% Discount on your first order!</p>
   </div>
   <div class="hero-image">
-    <img src="/images/hero-cake.jpg" alt="Delicious Cake" loading="eager"> 
-         alt="Delicious Cake" 
-         loading="eager"
-         fetchpriority="high"
-         width="500" height="500">
-</div>
+    <img src="/images/hero-cake.jpg" alt="Delicious Cake" loading="eager" onerror="this.src='https://images.weserv.nl/?url=images.unsplash.com/photo-1578985545062-69928b1d9587&w=500&q=70'">
+  </div>
 </section>
 
-<!-- Menu -->
 <section class="section" id="menu">
   <div class="section-head">
     <div>
@@ -76,7 +62,6 @@
       <p>Minimum order: 4 pieces for brownies / cupcakes / pastries</p>
     </div>
   </div>
-
   <div class="cats" id="cats">
     <div class="cat active" data-cat="All">All</div>
     <div class="cat" data-cat="Cake">Cakes</div>
@@ -84,13 +69,11 @@
     <div class="cat" data-cat="Pastry">Pastries</div>
     <div class="cat" data-cat="Cupcake">Cupcakes</div>
   </div>
-
   <div class="grid" id="productGrid">
     <p style="color:var(--muted)">Loading delicious treats...</p>
   </div>
 </section>
 
-<!-- About -->
 <section class="section" id="about">
   <div class="section-head"><div><h2>About Us</h2></div></div>
   <p style="color:var(--muted);max-width:760px;line-height:1.8">
@@ -100,7 +83,6 @@
   </p>
 </section>
 
-<!-- Reviews -->
 <section class="section" id="reviews">
   <div class="section-head">
     <div>
@@ -113,21 +95,18 @@
   </div>
 </section>
 
-<!-- Contact -->
 <footer class="footer" id="contact">
   <h3>The Cake Studio</h3>
   <p>📍 Hyderabad, Sindh, Pakistan<br>
      📞 0334-3920775<br>
      📧 thecakestudio@example.com</p>
   <div class="social">
-    <a href="https://instagram.com/the_cakestudio" target="_blank">Instagram</a>
-    <a href="https://wa.me/923343920775" target="_blank">WhatsApp</a>
+    <a href="https://instagram.com/the_cakestudio" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://wa.me/923343920775" target="_blank" rel="noopener">WhatsApp</a>
   </div>
   <p style="margin-top:20px;font-size:11px;opacity:.6">© 2025 The Cake Studio. All rights reserved.</p>
-  <p style="margin-top:8px;font-size:10px;opacity:.3"><a href="/admin.html" style="color:inherit">·</a></p>
 </footer>
 
-<!-- Cart Side Panel -->
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 <aside class="cart-panel" id="cartPanel">
   <div class="cart-head">
