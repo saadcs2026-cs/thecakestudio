@@ -18,13 +18,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<!-- FAVICON (browser tab icon) - multiple sizes for all devices -->
-<link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
-<link rel="shortcut icon" href="/images/logo.png" type="image/png">
+<link rel="icon" type="image/png" sizes="any" href="/images/logo.png">
 <link rel="apple-touch-icon" href="/images/logo.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
-<meta name="theme-color" content="#1f1410">
+<meta name="theme-color" content="#e9779a">
 
 <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -32,34 +28,59 @@
 
 <nav class="nav">
   <div class="nav-inner">
+    <button class="menu-toggle-mobile" onclick="toggleMobileNav()">≡</button>
+
     <a href="#home" class="brand js-scroll" data-target="home">
-      <img src="/images/logo.png" alt="The Cake Studio Logo" class="brand-logo">
+      <img src="/images/logo.png" alt="The Cake Studio" class="brand-logo">
       <div>
         <div class="brand-name">The Cake Studio</div>
         <div class="brand-sub">Home Bakery</div>
       </div>
     </a>
+
     <div class="nav-links">
-      <a href="#menu" class="js-scroll" data-target="menu">Menu</a>
-      <a href="#about" class="js-scroll" data-target="about">About</a>
-      <a href="#reviews" class="js-scroll" data-target="reviews">Reviews</a>
-      <a href="#contact" class="js-scroll" data-target="contact">Contact</a>
+      <a class="js-scroll" data-target="menu">Menu</a>
+      <a class="js-scroll" data-target="about">About</a>
+      <a class="js-scroll" data-target="reviews">Reviews</a>
+      <a class="js-scroll" data-target="contact">Contact</a>
     </div>
-    <button class="cart-btn" onclick="openCart()">
-      🛒 <span id="cartCount">0</span>
-    </button>
+
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="text-link" id="loginIconBtn" onclick="openAuth()" style="font-size:13px">Login</button>
+
+      <div class="account-info" id="accountBox" style="display:none">
+        <div class="acc-avatar" id="accAvatar">U</div>
+        <span class="acc-name" id="accName">User</span>
+        <button class="text-link" onclick="openInbox()" id="inboxLink" style="position:relative">Messages<span class="cart-count" id="msgBadge" style="display:none;margin-left:4px;background:var(--primary);color:#fff">0</span></button>
+        <button class="text-link" onclick="logoutCustomer()">Logout</button>
+      </div>
+
+      <button class="cart-btn" onclick="openCart()">
+        <img src="/icons/cart.png" class="icon" alt="">
+        <span>Cart</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
   </div>
 </nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <h4>Menu</h4>
+  <a class="js-scroll" data-target="menu">Menu</a>
+  <a class="js-scroll" data-target="about">About</a>
+  <a class="js-scroll" data-target="reviews">Reviews</a>
+  <a class="js-scroll" data-target="contact">Contact</a>
+</div>
 
 <section class="hero" id="home">
   <div class="hero-text">
     <h1>Baked with <span>Love</span>,<br>Shared with Joy</h1>
     <p>Happiness is just a click away — make your moments and celebrations more special with freshly baked cakes, brownies and pastries from our home kitchen in Hyderabad.</p>
-    <button class="hero-btn js-scroll" data-target="menu">Explore Menu →</button>
-    <p style="margin-top:20px;font-size:12px;color:var(--accent)">🎉 10% Discount on your first order!</p>
+    <button class="hero-btn js-scroll" data-target="menu">Explore Menu</button>
+    <div class="hero-tag">10% Discount on your first order</div>
   </div>
   <div class="hero-image">
-    <img src="/images/hero-cake.jpg" alt="Delicious Cake" loading="eager" onerror="this.src='https://images.weserv.nl/?url=images.unsplash.com/photo-1578985545062-69928b1d9587&w=500&q=70'">
+    <img src="/images/hero-cake.jpg" alt="Delicious Cake" loading="eager" onerror="this.src='https://images.weserv.nl/?url=images.unsplash.com/photo-1535254973040-607b474cb50d&w=500&q=70'">
   </div>
 </section>
 
@@ -78,53 +99,106 @@
     <div class="cat" data-cat="Cupcake">Cupcakes</div>
   </div>
   <div class="grid" id="productGrid">
-    <p style="color:var(--muted)">Loading delicious treats...</p>
+    <p style="color:var(--text-soft)">Loading menu...</p>
   </div>
 </section>
 
 <section class="section" id="about">
   <div class="section-head"><div><h2>About Us</h2></div></div>
-  <p style="color:var(--muted);max-width:760px;line-height:1.8">
-    The Cake Studio is a home-based bakery in <strong style="color:var(--accent)">Hyderabad, Sindh</strong>. 
-    From our kitchen to your heart 💖 — we take orders for cakes, cupcakes, brownies and pastries with full customization. 
-    Currently we deliver in Hyderabad only. Pickup is also available.
-  </p>
+  <div class="about-content">
+    <p>
+      The Cake Studio is a home-based bakery in <strong>Hyderabad, Sindh</strong>. 
+      From our kitchen to your heart — we take orders for cakes, cupcakes, brownies and pastries with full customization. 
+      Currently we deliver in Hyderabad only. Pickup is also available.
+    </p>
+  </div>
 </section>
 
 <section class="section" id="reviews">
   <div class="section-head">
     <div>
-      <h2>What Our Customers Say 💖</h2>
+      <h2>What Our Customers Say</h2>
       <p>Real feedback from happy cake lovers</p>
     </div>
   </div>
   <div class="reviews-grid" id="reviewsGrid">
-    <p style="color:var(--muted)">Loading reviews...</p>
+    <p style="color:var(--text-soft)">Loading reviews...</p>
   </div>
 </section>
 
 <footer class="footer" id="contact">
   <h3>The Cake Studio</h3>
-  <p>📍 Hyderabad, Sindh, Pakistan<br>
-     📞 0334-3920775<br>
-     📧 thecakestudio@example.com</p>
-  <div class="social">
-    <a href="https://instagram.com/the_cakestudio" target="_blank" rel="noopener">Instagram</a>
-    <a href="https://wa.me/923343920775" target="_blank" rel="noopener">WhatsApp</a>
+  <div class="footer-info">
+    <span><img src="/icons/location.png" class="icon icon-sm icon-pink" alt=""> Hyderabad, Sindh, Pakistan</span>
+    <span><img src="/icons/phone.png" class="icon icon-sm icon-pink" alt=""> 0334-3920775</span>
+    <span><img src="/icons/mail.png" class="icon icon-sm icon-pink" alt=""> thecakestudio@example.com</span>
   </div>
-  <p style="margin-top:20px;font-size:11px;opacity:.6">© 2025 The Cake Studio. All rights reserved.</p>
+  <div class="social">
+    <a href="https://instagram.com/the_cakestudio" target="_blank" rel="noopener" title="Instagram">
+      <img src="/icons/instagram.png" alt="Instagram">
+    </a>
+    <a href="https://wa.me/923343920775" target="_blank" rel="noopener" title="WhatsApp">
+      <img src="/icons/whatsapp.png" alt="WhatsApp">
+    </a>
+  </div>
+  <p class="footer-copy">© 2025 The Cake Studio. All rights reserved.</p>
 </footer>
 
-<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+
 <aside class="cart-panel" id="cartPanel">
   <div class="cart-head">
-    <h3>Your Cart 🧁</h3>
-    <button class="close-x" onclick="closeCart()">✕</button>
+    <h3>Your Cart</h3>
+    <button class="close-x" onclick="closeCart()">×</button>
   </div>
-  <div id="cartItems"><p style="color:var(--muted);font-size:13px">Your cart is empty.</p></div>
+  <div id="cartItems"><p style="color:var(--text-soft);font-size:13px">Your cart is empty.</p></div>
   <div class="cart-total"><span>Total</span><span id="cartTotal">Rs. 0</span></div>
   <button class="btn-primary" onclick="goToCheckout()">Proceed to Checkout</button>
 </aside>
+
+<aside class="cart-panel" id="inboxPanel">
+  <div class="cart-head">
+    <h3>Messages</h3>
+    <button class="close-x" onclick="closeInbox()">×</button>
+  </div>
+  <div id="inboxList"><p style="color:var(--text-soft);font-size:13px">No messages yet.</p></div>
+</aside>
+
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <h2 id="authTitle">Welcome Back</h2>
+    <p style="text-align:center;color:var(--text-soft);font-size:13px;margin-bottom:18px">
+      Login or create an account to track your orders and get updates
+    </p>
+
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuthTab('login',this)">Login</div>
+      <div class="auth-tab" onclick="switchAuthTab('signup',this)">Sign Up</div>
+    </div>
+
+    <div id="signupFields" style="display:none">
+      <div class="field">
+        <label>Full Name</label>
+        <input id="au_name" placeholder="Your name">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Phone Number</label>
+      <input id="au_phone" placeholder="03XX-XXXXXXX">
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <input id="au_pass" type="password" placeholder="Enter password (min 4 chars)">
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn-ghost" style="flex:1;justify-content:center" onclick="closeAuth()">Cancel</button>
+      <button class="btn-primary" style="flex:1.5;margin:0" id="authBtn" onclick="doAuth()">Login</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
