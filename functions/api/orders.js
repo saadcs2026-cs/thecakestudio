@@ -13,7 +13,6 @@ export async function onRequestPost(context) {
       });
     }
 
-    // Restrict to allowed cities
     const allowedCities = ['Hyderabad'];
     if (!allowedCities.includes(city)) {
       return new Response(JSON.stringify({ success: false, error: 'We do not deliver to this city yet' }), {
@@ -21,6 +20,7 @@ export async function onRequestPost(context) {
       });
     }
 
+    const cleanPhone = customer_phone.trim().replace(/[^\d+]/g, '');
     const order_code = 'CS-' + Date.now().toString().slice(-8);
 
     await context.env.DB.prepare(`
@@ -30,7 +30,7 @@ export async function onRequestPost(context) {
         payment_method, sender_name, sender_number, payment_screenshot
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
-      order_code, customer_name, customer_phone, customer_address, city,
+      order_code, customer_name, cleanPhone, customer_address, city,
       JSON.stringify(items), total_amount, delivery_date || null, notes || null,
       payment_method, sender_name || null, sender_number || null, payment_screenshot || null
     ).run();
@@ -45,14 +45,13 @@ export async function onRequestPost(context) {
   }
 }
 
-// Customer order status check (optional public endpoint)
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
   const code = url.searchParams.get('code');
   if (!code) return new Response(JSON.stringify({ error: 'code required' }), { status: 400 });
   try {
     const row = await context.env.DB.prepare(
-      'SELECT order_code, status, admin_message, estimated_time, total_amount FROM orders WHERE order_code = ?'
+      'SELECT order_code, status, estimated_time, total_amount FROM orders WHERE order_code = ?'
     ).bind(code).first();
     if (!row) return new Response(JSON.stringify({ error: 'Not found' }), { status: 404 });
     return new Response(JSON.stringify(row), { headers: { 'Content-Type': 'application/json' } });
